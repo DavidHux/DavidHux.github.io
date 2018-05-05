@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="UTF-8">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="configure,shell," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这篇BLOG用来记录在docklet上模拟多个节点，部署分布式Hadoop集群的过程。">
+<meta name="keywords" content="configure,shell">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docklet部署Hadoop集群">
+<meta property="og:url" content="https://davidhux.github.io/2017/10/14/docklet部署Hadoop集群/index.html">
+<meta property="og:site_name" content="One step ahead of the past">
+<meta property="og:description" content="这篇BLOG用来记录在docklet上模拟多个节点，部署分布式Hadoop集群的过程。">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:image" content="https://davidhux.github.io/images/1013-1.png">
+<meta property="og:image" content="https://davidhux.github.io/images/1013-2.png">
+<meta property="og:image" content="https://davidhux.github.io/images/1013-3.png">
+<meta property="og:updated_time" content="2018-05-05T10:17:29.398Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docklet部署Hadoop集群">
+<meta name="twitter:description" content="这篇BLOG用来记录在docklet上模拟多个节点，部署分布式Hadoop集群的过程。">
+<meta name="twitter:image" content="https://davidhux.github.io/images/1013-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://davidhux.github.io/2017/10/14/docklet部署Hadoop集群/"/>
+
+
+
+
+
+  <title>docklet部署Hadoop集群 | One step ahead of the past</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">One step ahead of the past</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">......予取予求</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://davidhux.github.io/2017/10/14/docklet部署Hadoop集群/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="David Hu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="One step ahead of the past">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">docklet部署Hadoop集群</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-10-14T00:18:42+08:00">
+                2017-10-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/installation/" itemprop="url" rel="index">
+                    <span itemprop="name">installation</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇BLOG用来记录在docklet上模拟多个节点，部署分布式Hadoop集群的过程。</p>
+<a id="more"></a>
+<h2 id="1-docklet"><a href="#1-docklet" class="headerlink" title="1 docklet"></a>1 docklet</h2><p>首先，docklet为用户分配了一定的物理资源，如图所示，当前总共可分配的资源有40个CPU核心、20000MB内存和400000MB硬盘空间，可以将这些资源根据需要自己分配到多个节点，构成一个虚拟集群。</p>
+<p><img src="/images/1013-1.png" alt=""></p>
+<h3 id="添加workspace"><a href="#添加workspace" class="headerlink" title="添加workspace"></a>添加workspace</h3><p>填写workspace name为hadoop，选择镜像baseWithJDK，这个镜像是在基础base镜像的基础上安装了java 8的环境。docklet提供保存镜像的功能，可以将一个节点的当前镜像保存下来，完全复制到另一个节点，这样可以节省安装时间。也可以使用base镜像，但需要重新配置java环境。<br>advanced options设定物理资源的分配，这里的分配如图。这里只进行了一个节点的分配，后面要添加其他节点在config中的addnode.</p>
+<p><img src="/images/1013-2.png" alt=""></p>
+<h3 id="go"><a href="#go" class="headerlink" title="go"></a>go</h3><p>节点分配完成后，点击workspace的start，然后点击go，转到jupyter页面，显示的是主节点<code>/root</code>目录下的文件信息。点击<code>New-&gt;Terminal</code>，在终端下进行操作。</p>
+<p><img src="/images/1013-3.png" alt=""></p>
+<h2 id="安装Hadoop"><a href="#安装Hadoop" class="headerlink" title="安装Hadoop"></a>安装Hadoop</h2><p>使用<code>mirrors.tuna.tsinghua.edu.cn</code>源下载hadoop的binary压缩包，使用<code>wget</code>命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># wget http://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.8.1/hadoop-2.8.1.tar.gz</span></span><br></pre></td></tr></table></figure>
+<p>这里下载的是2.8.1版本，可以根据需要把后面的版本号改成要下载的版本。</p>
+<p>或者在<a href="http://hadoop.apache.org/releases.html#08+June%2C+2017%3A+Release+2.8.1+available" target="_blank" rel="noopener">apache hadoop</a>官网获取要下载的hadoop版本的链接，</p>
+<p>完成后将下载的压缩包hadoop-2.8.1.tar.gz解压缩：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tar zxvf hadoop-2.8.1.tar.gz</span></span><br></pre></td></tr></table></figure>
+<p>得到<code>hadoop-2.8.1</code>目录（版本不同，目录不同，可以重命名为hadoop),<code>cd</code>到该目录下，结构如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cd hadoop-2.8.1</span></span><br><span class="line"><span class="comment"># ll</span></span><br><span class="line">drwxrwxr-x 11  500  500  4096 Oct 11 12:18 ./ </span><br><span class="line">drwx------ 12 root root  4096 Oct 12 12:18 ../ </span><br><span class="line">drwxrwxr-x  2  500  500  4096 Jun  2 06:24 bin/</span><br><span class="line">drwxrwxr-x  3  500  500  4096 Oct 11 12:13 etc/</span><br><span class="line">drwxrwxr-x  2  500  500  4096 Jun  2 06:24 include/</span><br><span class="line">drwxrwxr-x  3  500  500  4096 Jun  2 06:24 lib/ </span><br><span class="line">drwxrwxr-x  2  500  500  4096 Jun  2 06:24 libexec/</span><br><span class="line">-rw-rw-r--  1  500  500 99253 Jun  2 06:24 LICENSE.txt        </span><br><span class="line">-rw-rw-r--  1  500  500 15915 Jun  2 06:24 NOTICE.txt     </span><br><span class="line">-rw-r--r--  1  500  500  1366 Jun  2 06:24 README.txt   </span><br><span class="line">drwxrwxr-x  2  500  500  4096 Jun  2 06:24 sbin/      </span><br><span class="line">drwxrwxr-x  4  500  500  4096 Jun  2 06:24 share/</span><br></pre></td></tr></table></figure>
+<h3 id="配置集群"><a href="#配置集群" class="headerlink" title="配置集群"></a>配置集群</h3><p>如果分配了三个节点，则三个节点的主机名是host-0,host-1,host-2，以此类推，可以<code>cat /etc/hosts</code>查看。 </p>
+<p>然后需要配置<code>etc/hadoop</code>目录下的几个文件：</p>
+<h4 id="slaves"><a href="#slaves" class="headerlink" title="slaves"></a>slaves</h4><p>将所有节点添加进去，这样所有节点都作为datanode。也可以将host-0只作为namenode，不添加进去：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">host-0</span><br><span class="line">host-1</span><br><span class="line">host-2</span><br></pre></td></tr></table></figure>
+<h4 id="core-site-xml"><a href="#core-site-xml" class="headerlink" title="core-site.xml"></a>core-site.xml</h4><p>配置为</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt; </span><br><span class="line">    &lt;property&gt;   </span><br><span class="line">        &lt;name&gt;fs.defaultFS&lt;/name&gt; </span><br><span class="line">        &lt;value&gt;hdfs://host-0:9000&lt;/value&gt; </span><br><span class="line">    &lt;/property&gt;             </span><br><span class="line">    &lt;property&gt;       </span><br><span class="line">        &lt;name&gt;hadoop.tem.dir&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;file:/root/hadoop-2.8.1/tmp&lt;/value&gt;</span><br><span class="line">        &lt;description&gt;tem dir&lt;/description&gt;   </span><br><span class="line">    &lt;/property&gt;      </span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="hdfs-site-xml"><a href="#hdfs-site-xml" class="headerlink" title="hdfs-site.xml"></a>hdfs-site.xml</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;   </span><br><span class="line">    &lt;property&gt;     </span><br><span class="line">        &lt;name&gt;dfs.namenode.secondary.http-address&lt;/name&gt;   </span><br><span class="line">        &lt;value&gt;host-0:50090&lt;/value&gt;   </span><br><span class="line">    &lt;/property&gt;       </span><br><span class="line">    &lt;property&gt;       </span><br><span class="line">        &lt;name&gt;dfs.replication&lt;/name&gt;  </span><br><span class="line">        &lt;value&gt;3&lt;/value&gt;    </span><br><span class="line">    &lt;/property&gt;        </span><br><span class="line">    &lt;property&gt;         </span><br><span class="line">        &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;  </span><br><span class="line">        &lt;value&gt;file:/root/hadoop-2.8.1/tmp/dfs/name&lt;/value&gt; </span><br><span class="line">    &lt;/property&gt;         </span><br><span class="line">    &lt;property&gt;           </span><br><span class="line">        &lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;  </span><br><span class="line">        &lt;value&gt;file:/root/hadoop-2.8.1/tmp/dfs/data&lt;/value&gt; </span><br><span class="line">    &lt;/property&gt;      </span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
+<p>注意要保证datanode 的数目大于三，否则<code>dfs.replication</code>的值设为1.</p>
+<h4 id="mapred-site-xml"><a href="#mapred-site-xml" class="headerlink" title="mapred-site.xml"></a>mapred-site.xml</h4><p>可能需要先重命名，默认文件名为 <code>mapred-site.xml.template</code>，然后配置修改如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;  </span><br><span class="line">    &lt;property&gt;     </span><br><span class="line">        &lt;name&gt;mapreduce.framework.name&lt;/name&gt;    </span><br><span class="line">        &lt;value&gt;yarn&lt;/value&gt;     </span><br><span class="line">    &lt;/property&gt;        </span><br><span class="line">    &lt;property&gt;         </span><br><span class="line">        &lt;name&gt;mapreduce.jobhistory.address&lt;/name&gt; </span><br><span class="line">        &lt;value&gt;host-0:10020&lt;/value&gt;       </span><br><span class="line">    &lt;/property&gt;                </span><br><span class="line">    &lt;property&gt;               </span><br><span class="line">        &lt;name&gt;mapreduce.jobhistory.webapp.address&lt;/name&gt; </span><br><span class="line">        &lt;value&gt;host-0:19888&lt;/value&gt;           </span><br><span class="line">    &lt;/property&gt;                    </span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="yarn-site-xml"><a href="#yarn-site-xml" class="headerlink" title="yarn-site.xml"></a>yarn-site.xml</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;   </span><br><span class="line">&lt;!-- Site specific YARN configuration properties --&gt;  </span><br><span class="line">    &lt;property&gt;          </span><br><span class="line">        &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt; </span><br><span class="line">        &lt;value&gt;host-0&lt;/value&gt;  </span><br><span class="line">    &lt;/property&gt;           </span><br><span class="line">    &lt;property&gt;                </span><br><span class="line">        &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt; </span><br><span class="line">        &lt;value&gt;mapreduce_shuffle&lt;/value&gt;   </span><br><span class="line">    &lt;/property&gt;    </span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="分发"><a href="#分发" class="headerlink" title="分发"></a>分发</h3><p>配置完成后将hadoop-2.8.1目录分发到其他节点上.</p>
+<p>复制到其他节点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># scp -r /root/hadoop-2.8.1 host-1:~</span></span><br><span class="line"><span class="comment"># scp -r /root/hadoop-2.8.1 host-2:~</span></span><br></pre></td></tr></table></figure>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><p>在hadoop-2.8.1目录下：<br>先执行一次<code>hdfs namenode -format</code>,之后不需要再执行</p>
+<p>启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ./sbin/start-dfs.sh</span></span><br><span class="line"><span class="comment"># ./sbin/start-yarn.sh</span></span><br></pre></td></tr></table></figure>
+<p>创建hdfs下root用户目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ./bin/hdfs dfs -mkdir /user/root</span></span><br></pre></td></tr></table></figure>
+<p>之后可以执行mapreduce任务</p>
+<p>例如提交input数据到hdfs:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ./bin/hdfs dfs -mkdir input</span></span><br><span class="line"><span class="comment"># ./bin/hdfs dfs -put ./etc/hadoop/*.xml input</span></span><br></pre></td></tr></table></figure>
+<p>执行wordcount的例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ./bin/hadoop jar ./share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar wordcount input output</span></span><br><span class="line"><span class="comment"># ./bin/hdfs dfs -cat output/*</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="http://www.powerxing.com/install-hadoop-cluster/" target="_blank" rel="noopener">Hadoop集群安装配置教程_Hadoop2.6.0_Ubuntu/CentOS</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/configure/" rel="tag"># configure</a>
+          
+            <a href="/tags/shell/" rel="tag"># shell</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/25/HiBench-测试集群/" rel="next" title="HiBench 测试集群">
+                <i class="fa fa-chevron-left"></i> HiBench 测试集群
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/04/Yarn-resource/" rel="prev" title="Yarn resource">
+                Yarn resource <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">David Hu</p>
+              <p class="site-description motion-element" itemprop="description">David's blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-docklet"><span class="nav-number">1.</span> <span class="nav-text">1 docklet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#添加workspace"><span class="nav-number">1.1.</span> <span class="nav-text">添加workspace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#go"><span class="nav-number">1.2.</span> <span class="nav-text">go</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Hadoop"><span class="nav-number">2.</span> <span class="nav-text">安装Hadoop</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置集群"><span class="nav-number">2.1.</span> <span class="nav-text">配置集群</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#slaves"><span class="nav-number">2.1.1.</span> <span class="nav-text">slaves</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#core-site-xml"><span class="nav-number">2.1.2.</span> <span class="nav-text">core-site.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hdfs-site-xml"><span class="nav-number">2.1.3.</span> <span class="nav-text">hdfs-site.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mapred-site-xml"><span class="nav-number">2.1.4.</span> <span class="nav-text">mapred-site.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#yarn-site-xml"><span class="nav-number">2.1.5.</span> <span class="nav-text">yarn-site.xml</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分发"><span class="nav-number">2.2.</span> <span class="nav-text">分发</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行"><span class="nav-number">3.</span> <span class="nav-text">运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">David Hu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
