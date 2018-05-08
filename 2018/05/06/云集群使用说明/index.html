@@ -102,18 +102,18 @@
 
 
 
-  <meta name="description" content="本文章用来说明当前云集群的配置情况和相关使用方式。 集群配置集群共有8个节点，包括host00的主节点，和host[6-13](不包括7）七个slave节点。暂时 安装软件 Hadoop: 2.6.0 Hbase: 1.2.0 Hive: 1.1.0 Spark: 1.6.0 using scala version 2.10.5 Flink: Kafka: java： 7  使用方式登录方式这9个">
+  <meta name="description" content="本文章用来说明当前云集群的配置情况和相关使用方式。 集群配置集群共有8个节点，包括host00的主节点，和host[6-13](不包括7）七个slave节点。 安装软件 Hadoop: 2.6.0 Hbase: 1.2.0 Hive: 1.1.0 Spark: 1.6.0 using scala version 2.10.5 Flink: Kafka: java： 7  使用方式登录方式这8个节点">
 <meta name="keywords" content="shell,bigdata">
 <meta property="og:type" content="article">
 <meta property="og:title" content="云集群使用说明">
 <meta property="og:url" content="https://davidhux.github.io/2018/05/06/云集群使用说明/index.html">
 <meta property="og:site_name" content="One step ahead of the past">
-<meta property="og:description" content="本文章用来说明当前云集群的配置情况和相关使用方式。 集群配置集群共有8个节点，包括host00的主节点，和host[6-13](不包括7）七个slave节点。暂时 安装软件 Hadoop: 2.6.0 Hbase: 1.2.0 Hive: 1.1.0 Spark: 1.6.0 using scala version 2.10.5 Flink: Kafka: java： 7  使用方式登录方式这9个">
+<meta property="og:description" content="本文章用来说明当前云集群的配置情况和相关使用方式。 集群配置集群共有8个节点，包括host00的主节点，和host[6-13](不包括7）七个slave节点。 安装软件 Hadoop: 2.6.0 Hbase: 1.2.0 Hive: 1.1.0 Spark: 1.6.0 using scala version 2.10.5 Flink: Kafka: java： 7  使用方式登录方式这8个节点">
 <meta property="og:locale" content="UTF-8">
-<meta property="og:updated_time" content="2018-05-08T01:54:55.795Z">
+<meta property="og:updated_time" content="2018-05-08T01:57:58.658Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="云集群使用说明">
-<meta name="twitter:description" content="本文章用来说明当前云集群的配置情况和相关使用方式。 集群配置集群共有8个节点，包括host00的主节点，和host[6-13](不包括7）七个slave节点。暂时 安装软件 Hadoop: 2.6.0 Hbase: 1.2.0 Hive: 1.1.0 Spark: 1.6.0 using scala version 2.10.5 Flink: Kafka: java： 7  使用方式登录方式这9个">
+<meta name="twitter:description" content="本文章用来说明当前云集群的配置情况和相关使用方式。 集群配置集群共有8个节点，包括host00的主节点，和host[6-13](不包括7）七个slave节点。 安装软件 Hadoop: 2.6.0 Hbase: 1.2.0 Hive: 1.1.0 Spark: 1.6.0 using scala version 2.10.5 Flink: Kafka: java： 7  使用方式登录方式这8个节点">
 
 
 
@@ -337,7 +337,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-05-08 01:54:55" itemprop="dateModified" datetime="2018-05-08T01:54:55Z">2018-05-08</time>
+                <time title="Modified: 2018-05-08 01:57:58" itemprop="dateModified" datetime="2018-05-08T01:57:58Z">2018-05-08</time>
               
             
           </span>
@@ -389,7 +389,7 @@
 
       
         <p>本文章用来说明当前云集群的配置情况和相关使用方式。</p>
-<h1 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h1><p>集群共有8个节点，包括host00的主节点，和host[6-13](不包括7）七个slave节点。暂时</p>
+<h1 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h1><p>集群共有8个节点，包括host00的主节点，和host[6-13](不包括7）七个slave节点。</p>
 <h2 id="安装软件"><a href="#安装软件" class="headerlink" title="安装软件"></a>安装软件</h2><ul>
 <li>Hadoop: 2.6.0</li>
 <li>Hbase: 1.2.0</li>
@@ -399,9 +399,9 @@
 <li>Kafka:</li>
 <li>java： 7</li>
 </ul>
-<h1 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h1><h2 id="登录方式"><a href="#登录方式" class="headerlink" title="登录方式"></a>登录方式</h2><p>这9个节点通过210.28.133.11代理与外部节点进行通信，通过端口映射可以进行远程登陆，如host00登陆映射的端口为21084，可以使用如下的方式登陆到host00:</p>
+<h1 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h1><h2 id="登录方式"><a href="#登录方式" class="headerlink" title="登录方式"></a>登录方式</h2><p>这8个节点通过210.28.133.11代理与外部节点进行通信，通过端口映射可以进行远程登陆，如host00登陆映射的端口为21084，可以使用如下的方式登陆到host00:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// remote login</span><br><span class="line">$ ssh username@210.28.133.11 -p 21084</span><br><span class="line">username@210.28.133.11\s password:</span><br><span class="line">Last login: Sat May  5 06:13:24 2018 from gateway</span><br><span class="line">[username@host00 ~]<span class="comment">#</span></span><br><span class="line">// upload file</span><br><span class="line">$ scp -P 21084 file username@210.28.133.11:~</span><br></pre></td></tr></table></figure>
-<p>对于其他节点，可以在登陆Host00后进行登录。</p>
+<p>对于其他节点，可以在登陆Host00后进行登录（可能未添加账户）。</p>
 <h2 id="web页面的查看"><a href="#web页面的查看" class="headerlink" title="web页面的查看"></a>web页面的查看</h2><p>原本云集群的web管理界面提供了内部节点端口对外映射的功能，但这个功能好像是坏的，只有对于ssh登陆端口的映射是好的。我们使用ssh的本身自带的端口映射功能进行代替。</p>
 <p>例如，我们要查看Hadoop的web页面，该页面在Host00的50030端口。可以通过两种方式进行映射。</p>
 <h3 id="1-单对单的映射"><a href="#1-单对单的映射" class="headerlink" title="1. 单对单的映射"></a>1. 单对单的映射</h3><p>可以把Host00的50030端口单独映射到本地机器的一个端口，假设是50031，则在终端中执行以下命令：</p>
