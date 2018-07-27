@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="UTF-8">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="异质网络中的节点分类">
+<meta name="keywords" content="network embedding,feature learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于异质网络的产品半监督分类实验整理">
+<meta property="og:url" content="https://davidhux.github.io/2018/07/24/基于异质网络的产品半监督分类实验整理/index.html">
+<meta property="og:site_name" content="One step ahead of the past">
+<meta property="og:description" content="异质网络中的节点分类">
+<meta property="og:locale" content="UTF-8">
+<meta property="og:image" content="https://davidhux.github.io/2018/07/24/images/graph.png">
+<meta property="og:updated_time" content="2018-07-27T13:36:18.878Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于异质网络的产品半监督分类实验整理">
+<meta name="twitter:description" content="异质网络中的节点分类">
+<meta name="twitter:image" content="https://davidhux.github.io/2018/07/24/images/graph.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://davidhux.github.io/2018/07/24/基于异质网络的产品半监督分类实验整理/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>基于异质网络的产品半监督分类实验整理 | One step ahead of the past</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="UTF-8">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">One step ahead of the past</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">......予取予求</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://davidhux.github.io/2018/07/24/基于异质网络的产品半监督分类实验整理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="David Hu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="One step ahead of the past">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基于异质网络的产品半监督分类实验整理
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-07-23 21:17:57" itemprop="dateCreated datePublished" datetime="2018-07-23T21:17:57Z">2018-07-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-07-27 13:36:18" itemprop="dateModified" datetime="2018-07-27T13:36:18Z">2018-07-27</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="异质网络中的节点分类"><a href="#异质网络中的节点分类" class="headerlink" title="异质网络中的节点分类"></a>异质网络中的节点分类</h1><a id="more"></a>
+<h2 id="异质网络说明"><a href="#异质网络说明" class="headerlink" title="异质网络说明"></a>异质网络说明</h2><p>什么是异质网络？首先说明什么是网络（network），来自维基百科的解释，网络是图的一种:</p>
+<blockquote>
+<p>Network theory is a part of graph theory: a network can be defined as a graph in which nodes and/or edges have attributes (e.g. names).</p>
+</blockquote>
+<p>普通的图（graph)只是两个集合，点的集合和边的集合，点的集合是一堆index，而边的集合点到点的index pair，可能还有权重。网络的区别是点和边可能不仅仅是index，还有一些属性。</p>
+<p>比如一个班级，我们把所有学生作为节点，他们坐位之间的邻接关系作为边，就构成了一张图，如果考虑进每个人的身高、体重等信息，就构成一张网络。</p>
+<p>而异质网络的区别是节点和边会有不止一种类别，不同类别的节点可能会有不同的属性，边因为连接不同类别的节点也会属于不同的类。</p>
+<p>比如我们在上面的网络中加入老师作为新的节点类别，老师和学生作为两种不同的节点，就构成一个异质网络。如果我们加入老师和学生的对话信息作为边，比如老师表扬了某些学生，老师批评了某些学生，那么可以根据这些边将学生进行一个简单的分类。这就是异质网络中的节点分类问题。</p>
+<p>一般来说，分类是对整个网络中的某一类节点单独进行分类，这里的分类是对节点做标记（label）的意思。异质网络中的节点分类也可以称作做label。</p>
+<p>常见的网络有社交网络，学术文献网络等。</p>
+<h2 id="graph-embedding-network-embedding"><a href="#graph-embedding-network-embedding" class="headerlink" title="graph embedding/network embedding"></a>graph embedding/network embedding</h2><h2 id="已有实验数据说明"><a href="#已有实验数据说明" class="headerlink" title="已有实验数据说明"></a>已有实验数据说明</h2><p>根据已有数据，进行属性筛选，构成的关系表如下：</p>
+<ol>
+<li>已检测的产品：产品ID，所属公司，检测结果</li>
+<li>未检测产品：产品ID，所属公司，产品标准</li>
+<li>公司：公司ID，经济类型，所属地区</li>
+</ol>
+<p>其中已检测产品和未检测产品在图结构中视为同一类节点。使用以上关系构成的图结构模型如下：</p>
+<p><img src="../images/graph.png" alt="产品关系拓扑图"></p>
+<p>对已检测的产品进行部分过滤之后做了一些统计：</p>
+<ol>
+<li>共有43247个产品被检测，其中合格的有38114, 不合格的有5133, 合格占比0.8813096862210096。</li>
+<li>除此之外还有321604件产品未检测，共计364851件产品，分布在111183家公司。</li>
+<li>检测的所有产品集中在9358家公司中，不合格的5133个产品集中在1599家公司中，所有含有不合格产品的公司的产品不合格数占其总产品数的比值为 0.607。</li>
+<li>剩余的339815件未检测的产品中只有131件属于上面已检测的公司，可以认为检测的是一个公司所有的产品。</li>
+</ol>
+<h2 id="已进行的实验"><a href="#已进行的实验" class="headerlink" title="已进行的实验"></a>已进行的实验</h2><p>使用metapath2vec方法，定义了pcecp（产品-公司-经济类型-公司-产品）和pclcp（产品-公司-地区-公司-产品）两条路径，对所有产品，按照这两条路径模式分别生成20条长度为50的路径，路径中只保留了产品，没有公司和经济类型、地区等信息。产生的数据文件已经有5.7G。</p>
+<p>因为使用cpu训练太慢，就使用了word2vec的cuda版本进行的训练.参数设置：<br>vector size:128, window size: 7, sub sample: 1e-3, negative sample: 5, iteration: 3.</p>
+<p>训练时间大约25分钟。</p>
+<p>对已分类的产品生成的vector使用logistic regression做分类训练：划分测试集占比0.3，运行20次，平均结果为</p>
+<p>average score:  0.880214357314  f1:  0.936279680458</p>
+<h2 id="现有实验问题汇总"><a href="#现有实验问题汇总" class="headerlink" title="现有实验问题汇总"></a>现有实验问题汇总</h2><h3 id="现有已标记数据类别不均衡。"><a href="#现有已标记数据类别不均衡。" class="headerlink" title="现有已标记数据类别不均衡。"></a>现有已标记数据类别不均衡。</h3><p>产品数据标记有通过和未通过，其中大部分的标记为通过，其中正例: 38114, 反例: 5133, 正例占比: 0.8813。很难训练出一个好的模型。</p>
+<h3 id="基于meta-path的方法依赖于path-pattern的质量。"><a href="#基于meta-path的方法依赖于path-pattern的质量。" class="headerlink" title="基于meta path的方法依赖于path pattern的质量。"></a>基于meta path的方法依赖于path pattern的质量。</h3><p>原论文中针对的学术会议、论文、作者，这些对象之间的关系对应的path 的pattern较为明显。比如，对会议进行分类，定义pattern：CAC，即从一个会议连接到一个作者，再连接到另一个会议。通常情况下，同一个作者研究的东西是确定或者相似，基本是一个方向的，所以他投的几篇论文所属的会议也差不多是一个类别的。简而言之，同一作者的论文对应的会议是类别相似的的。通过CAC模式，同类别的会议大部分情况下会出现在同一个路径中，然后把路径放入skip gram模型中训练，效果往往是好的。</p>
+<p>但是在这个数据中，产品好坏的划分和路径pattern的对应不是那么明显。很难说，同一个公司的产品都是好的，或者都是坏的；同一个地区的产品都是好的或坏的；等等。</p>
+<p>在这种很难确定好的metapath的情况下，这种方法就很难有好的效果。</p>
+<h3 id="使用半监督的方法指导路径的生成"><a href="#使用半监督的方法指导路径的生成" class="headerlink" title="使用半监督的方法指导路径的生成"></a>使用半监督的方法指导路径的生成</h3><p>假设认为同一个类别下的节点应当更容易出现在同一条路径下。在这样的假设下，基于半监督的方法自学习一个概率路径转移模型，代替原来的基于meta path的普通路径模型，是否能得到一个更好的效果。</p>
+<h3 id="基于GCN的方法依赖于图的拓扑结构"><a href="#基于GCN的方法依赖于图的拓扑结构" class="headerlink" title="基于GCN的方法依赖于图的拓扑结构"></a>基于GCN的方法依赖于图的拓扑结构</h3><p>GCN本质上考虑的是图的空间结构，假设认为图具有局部相似性，在有这种特点的图数据下能得到好的效果。</p>
+<h2 id="someworks-need-to-do"><a href="#someworks-need-to-do" class="headerlink" title="someworks need to do"></a>someworks need to do</h2><ol>
+<li>针对类别不均衡问题，将正例划分成和反例样本相同规模的大小进行训练。</li>
+<li>对训练数据和测试数据按照公司进行划分</li>
+<li>对公司和产品添加fearture，注意进行归一化操作，可以对生成的embedding做concatenate。</li>
+<li>定义多条meta path，按照相似度进行转移</li>
+</ol>
+<h2 id="papers-to-read"><a href="#papers-to-read" class="headerlink" title="papers to read"></a>papers to read</h2><ol>
+<li>阅读skip gram model</li>
+<li>阅读Multiclass Semi-Supervised Learning with Markov Random Walks</li>
+<li>阅读line</li>
+<li>阅读deepwalk</li>
+<li>阅读node2vector</li>
+<li>半监督和分类</li>
+<li>gcn</li>
+<li>metapath</li>
+<li>metagraph</li>
+<li>planeiot</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network-embedding/" rel="tag"># network embedding</a>
+          
+            <a href="/tags/feature-learning/" rel="tag"># feature learning</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/06/云集群使用说明/" rel="next" title="云集群使用说明">
+                <i class="fa fa-chevron-left"></i> 云集群使用说明
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">David Hu</p>
+              <p class="site-description motion-element" itemprop="description">David's blog</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#异质网络中的节点分类"><span class="nav-number">1.</span> <span class="nav-text">异质网络中的节点分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#异质网络说明"><span class="nav-number">1.1.</span> <span class="nav-text">异质网络说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#graph-embedding-network-embedding"><span class="nav-number">1.2.</span> <span class="nav-text">graph embedding/network embedding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#已有实验数据说明"><span class="nav-number">1.3.</span> <span class="nav-text">已有实验数据说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#已进行的实验"><span class="nav-number">1.4.</span> <span class="nav-text">已进行的实验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#现有实验问题汇总"><span class="nav-number">1.5.</span> <span class="nav-text">现有实验问题汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#现有已标记数据类别不均衡。"><span class="nav-number">1.5.1.</span> <span class="nav-text">现有已标记数据类别不均衡。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于meta-path的方法依赖于path-pattern的质量。"><span class="nav-number">1.5.2.</span> <span class="nav-text">基于meta path的方法依赖于path pattern的质量。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用半监督的方法指导路径的生成"><span class="nav-number">1.5.3.</span> <span class="nav-text">使用半监督的方法指导路径的生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于GCN的方法依赖于图的拓扑结构"><span class="nav-number">1.5.4.</span> <span class="nav-text">基于GCN的方法依赖于图的拓扑结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#someworks-need-to-do"><span class="nav-number">1.6.</span> <span class="nav-text">someworks need to do</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#papers-to-read"><span class="nav-number">1.7.</span> <span class="nav-text">papers to read</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">David Hu</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
